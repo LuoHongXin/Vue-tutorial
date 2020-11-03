@@ -17,4 +17,5 @@
 - 路由router
 - Vuex仓库store
 - vue的扩展
+- vue的SSR服务器端渲染 VS 预渲染
 以上虽然不是vue的全部内容（想看更全的内容可查看[vue官方文档](https://cn.vuejs.org/v2/api/)），但却是vue开发中的最常用的知识，只要掌握以上内容，你就可以轻松驾驭vue项目
