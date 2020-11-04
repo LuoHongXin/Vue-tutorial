@@ -92,3 +92,85 @@
      })
      vm.$emit('test', 'hi')// => hi
     ``` 
+
+&nbsp;
+
+ - **vm.$once(event,callback)**
+    **参数**：
+     * `{string} event`
+     * `{Function} callback`
+
+    **用法**：
+     监听一个自定义事件，但是只触发一次。一旦触发之后，监听器就会被移除。
+
+&nbsp;
+
+ - **vm.$off(event,callback)**
+    **参数**：
+     * `{string | Array<string>} event`
+     * `{Function} callback`
+
+    **用法**：
+     移除自定义事件监听器。
+     * 若没有提供参数，则移除所有的事件监听器；
+     * 若只提供了事件，则移除该事件所有的监听器；
+     * 如果同时提供了事件与回调，则只移除这个回调的监听器。
+
+&nbsp;
+
+ - **vm.$emit(eventName,[...args])**
+    **参数**：
+     * `{string} eventName`
+     * `[...args]`
+    触发当前实例上的事件，附加参数[...args]都会传给监听器的回调。
+
+&nbsp;
+
+#### 生命周期
+ - **vm.$mount([elementOrSeletor])**
+    **参数**：
+     * `{Element | string} [elementOrSeletor]`
+     * `{boolean} [hydrating]`
+
+    **返回值**：`vm` 实例自身
+
+    **用法**：
+     如果 Vue 实例在实例化时没有收到 el 选项，则它处于“未挂载”状态，没有关联的 DOM 元素。可以使用 `vm.$mount()` 手动挂载一个未挂载的实例。
+     如果没有提供 `elementOrSelector` 参数，模板将被渲染为文档之外的元素，并且你必须使用 DOM API 把它插入文档中。
+     这个方法返回实例自身，因而可以链式调用其它实例方法。
+    **示例**：
+    ```js
+     var VueDom = Vue.extend({
+         template: '<div>Hello!</div>'
+     })
+     // 在实例创建时，利用el属性挂载（替换掉 #app）
+     new VueDom({
+         el: '#app'
+     })
+     // 创建实例后，手动挂载（替换掉 #app）
+     new VueDom().$mount('#app')
+     // 在文档渲染之外渲染并随后挂载
+     var myVueDom = new VueDom().$mount();
+     document.getElementById('app').appendChild(myVueDom.$el);
+    ``` 
+
+&nbsp;
+
+- **vm.$forceUpdate()**
+    **示例**：
+    迫使 Vue 实例重新渲染。注意它仅仅影响实例本身和插入插槽内容的子组件，而不是所有子组件。
+
+&nbsp;
+
+- **vm.$nextTick([callback])**
+    **参数**：
+    * `{Function} [callback]`
+   
+    **用法**：
+    将回调延迟到下次 DOM 更新循环之后执行。在修改数据之后立即使用它，然后等待 DOM 更新。它跟全局方法 Vue.nextTick 一样，不同的是回调的 this 自动绑定到调用它的实例上。
+
+&nbsp;
+
+- **vm.$destory()**
+    **用法**：
+    完全销毁一个实例。清理它与其它实例的连接，解绑它的全部指令及其事件监听器。触发 `beforeDestroy` 和 `destroyed` 的钩子。
