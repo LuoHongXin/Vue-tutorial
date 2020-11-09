@@ -13,7 +13,7 @@
 - 脚手架
 - 动画
 - 路由router
-- Vuex仓库store
+- Vuex
 - vue的扩展
 - vue的SSR服务器端渲染 VS 预渲染
 - 高阶组件
