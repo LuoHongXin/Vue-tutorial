@@ -111,4 +111,35 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 Web Co
 带有 `v-slot` 具名的模板都会进入对应的具名插槽，任何没有被包裹的内容都会被默认为默认插槽的内容。
 注意： `v-slot` 只能添加在 `<template>` 上。`v-slot:header` 也可以缩写为 `#header`
 
-
+#### 作用域插槽
+有时我们需要插槽内容能够访问子组件中的数据，如 `<current-user>` 组件：
+```html
+  <span>
+     <slot>
+       {{user.luo}} 
+     </slot> 
+  </span> 
+```
+我们想要换掉备用内容，用名而非姓来显示：
+```html
+  <current-user>
+       {{user.hongxin}} 
+  </current-user> 
+```
+但是上诉代码会报错，因为只有 `<current-user>` 组件可以访问到 `user` ，而在调用的时候是由父级作用域渲染的。
+为了让 `user` 在父级的插槽内容中可用，我们将 `user` 作为 `<slot>` 元素的一个 attribute 绑定上去：
+```html
+  <span>
+     <slot v-bind:user='user'>
+       {{user.luo}} 
+     </slot> 
+  </span> 
+```
+绑定在 `<slot>` 元素上的属性被称为 插槽 prop 。现在在父级作用域中，我们可以使用带值的 `v-slot` 来定义我们提供的插槽 prop 名字：
+```html
+  <current-user>
+      <template v-slot:default='haha'>
+         {{haha.user.hongxin}} 
+      </template>
+  </current-user> 
+```
