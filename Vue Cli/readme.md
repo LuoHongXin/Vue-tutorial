@@ -95,4 +95,101 @@ Vue 项目默认是单页面应用，但是设置这个选项之后，Vue 可以
 - default：`true`
 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境的构建。
 
-#### crossorigin
+#### configureWebpack
+- type：`Object | Function`
+如果这个值是一个对象，则会合并到最终的webpack配置中。
+如果这个值是一个函数，则会接收被解析的配置作为参数。该函数既可以修改配置并不返回任何东西，也可以返回一个被克隆或合并过的配置版本。
+```js
+    configureWebpack: {
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, 'src'),
+                '@views': path.resolve(__dirname, 'src/app/views'),
+                '@common': path.resolve(__dirname, 'src/common'),
+                '@constants': path.resolve(__dirname, 'src/constants'),
+                '@utils': path.resolve(__dirname, 'src/common/utils')
+            }
+        },
+        plugins: [
+            new webpack.ProvidePlugin({
+                _: 'lodash',
+                Axios: 'axios'
+            }),
+            new EcpVersionWebpackPlugin(),
+            // new EcpThemeWebpackPlugin({
+            //     entry: {
+            //         default: './src/theme/default/index.scss',
+            //         darken: './src/theme/darken/index.scss'
+            //     }
+            // })
+            // 配置compression-webpack-plugin压缩
+            new CompressionWebpackPlugin({
+                algorithm: 'gzip',
+                test: new RegExp('\\.("js|css")$'),
+                threshold: 10240,
+                minRatio: 0.8
+            })
+        ],
+        performance: {
+            hints: 'warning',
+            // 入口起点的最大体积 整数类型（以字节为单位）
+            maxEntrypointSize: 50000000,
+            // 生成文件的最大体积 整数类型（以字节为单位 300k）
+            maxAssetSize: 30000000,
+            // 只给出 js 文件的性能提示
+            assetFilter: function (assetFilename) {
+                return assetFilename.endsWith('.js');
+            }
+        }
+        // devtool: '#eval-source-map'
+    },
+```
+#### chainWebpack
+- type：`Function`
+是一个函数，允许对内部的 webpack 配置进行更细粒度的修改。
+```js
+ chainWebpack: config => {
+        config.plugins.delete('prefetch');
+        if (process.env.NODE_ENV === 'production') {
+            config.plugin('compression').use(CompressionWebpackPlugin, [{
+                test: /\.js$|\.css$/,
+                algorithm: 'gzip',
+                threshold: 1024 * 512
+            }]);
+        }
+    },
+```
+
+#### css
+css 下有很多配置，像是 modules 、requireModuleExtension 、 extract 、loaderOptions 等
+```js
+css: {
+        loaderOptions: {
+            sass: {
+                data: '@import "~ecp-ui/styles/var";'
+            }
+        }
+    },
+```
+
+#### devServe
+一般用来做服务器代理的设置，其下也有很多配置，像是 port、host、https、open、proxy等
+```js
+devServer: {
+        port: 8080,
+        host: '0.0.0.0',
+        https: false,
+        open: true,
+        proxy: proxyConfig
+    },
+```
+
+#### pluginOptions
+这是一个不进行任何 schema 验证的对象，因此它可以用来传递任何第三方插件选项。
+```js
+pluginOptions: {
+  foo: {
+    // 插件可以作为 'options.pluginOptions.foo'访问这些选项。
+  }
+}
+```
